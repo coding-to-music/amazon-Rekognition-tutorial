@@ -242,18 +242,18 @@ Copy over starting files to facilitate development of the application
    following::
 
 ```java
-   $ tree -a media-query
-   â”œâ”€â”€ .chalice
-   â”‚Â Â â”œâ”€â”€ config.json
-   â”‚Â Â â””â”€â”€ policy-dev.json
-   â”œâ”€â”€ .gitignore
-   â”œâ”€â”€ app.py
-   â”œâ”€â”€ chalicelib
-   â”‚Â Â â”œâ”€â”€ **init**.py
-   â”‚Â Â â””â”€â”€ rekognition.py
-   â”œâ”€â”€ recordresources.py
-   â”œâ”€â”€ requirements.txt
-   â””â”€â”€ resources.json
+$ tree -a media-query
+├── .chalice
+│   ├── config.json
+│   └── policy-dev.json
+├── .gitignore
+├── app.py
+├── chalicelib
+│   ├── __init__.py
+│   └── rekognition.py
+├── recordresources.py
+├── requirements.txt
+└── resources.json
 ```
 
 For the files that got added, they will be used later in the tutorial but
@@ -300,8 +300,9 @@ on an image stored in a S3 bucket.
 2. Add `boto3`, the AWS SDK for Python, as a dependency in the
    `requirements.txt` file:
 
-.. literalinclude:: ../../../code/media-query/03-add-db/requirements.txt
-:linenos:
+```java
+boto3<1.8.0
+```
 
 3. Open the `app.py` file and delete all lines of code underneath
    the line: `app = Chalice(app_name='media-query')`. Your `app.py` file
@@ -316,37 +317,95 @@ on an image stored in a S3 bucket.
 4. Import `boto3` and the `chalicelib.rekognition` module in your
    `app.py` file:
 
-.. literalinclude:: ../../../code/media-query/03-add-db/app.py
-:linenos:
-:lines: 1-3
-:emphasize-lines: 1,3
+```java
+import boto3
+from chalice import Chalice
+from chalicelib import rekognition
+```
 
 4. Add a helper function for instantiating a Rekognition client:
 
-.. literalinclude:: ../../../code/media-query/03-add-db/app.py
-:linenos:
-:lines: 1-15
-:emphasize-lines: 7,10-15
+```java
+import boto3
+from chalice import Chalice
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_REKOGNITION_CLIENT = None
+
+
+def get_rekognition_client():
+    global _REKOGNITION_CLIENT
+    if _REKOGNITION_CLIENT is None:
+        _REKOGNITION_CLIENT = rekognition.RekognitonClient(
+            boto3.client('rekognition'))
+    return _REKOGNITION_CLIENT
+```
 
 5. Add a new function `detect_labels_on_image` decorated by the
    `app.lambda_function` decorator. Have the function use a rekognition
    client to detect and return labels on an image stored in a S3 bucket:
 
-.. literalinclude:: ../../../code/media-query/03-add-db/app.py
-:linenos:
-:emphasize-lines: 18-22
+```java
+import boto3
+from chalice import Chalice
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_REKOGNITION_CLIENT = None
+
+
+def get_rekognition_client():
+    global _REKOGNITION_CLIENT
+    if _REKOGNITION_CLIENT is None:
+        _REKOGNITION_CLIENT = rekognition.RekognitonClient(
+            boto3.client('rekognition'))
+    return _REKOGNITION_CLIENT
+
+
+@app.lambda_function()
+def detect_labels_on_image(event, context):
+    bucket = event['Bucket']
+    key = event['Key']
+    return get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+```
 
 ### Verification
 
 1. Ensure the contents of the `requirements.txt` file is:
 
-.. literalinclude:: ../../../code/media-query/03-add-db/requirements.txt
-:linenos:
+```java
+boto3<1.8.0
+```
 
 1. Ensure the contents of the `app.py` file is:
 
-.. literalinclude:: ../../../code/media-query/03-add-db/app.py
-:linenos:
+```java
+import boto3
+from chalice import Chalice
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_REKOGNITION_CLIENT = None
+
+
+def get_rekognition_client():
+    global _REKOGNITION_CLIENT
+    if _REKOGNITION_CLIENT is None:
+        _REKOGNITION_CLIENT = rekognition.RekognitonClient(
+            boto3.client('rekognition'))
+    return _REKOGNITION_CLIENT
+
+
+@app.lambda_function()
+def detect_labels_on_image(event, context):
+    bucket = event['Bucket']
+    key = event['Key']
+    return get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+```
 
 ## Create a S3 bucket
 
@@ -467,19 +526,19 @@ Copy over files needed for integrating the DynamoDB table into the application
    following files and directories::
 
 ```java
-   $ tree -a .
-   â”œâ”€â”€ .chalice
-   â”‚Â Â â”œâ”€â”€ config.json
-   â”‚Â Â â””â”€â”€ policy-dev.json
-   â”œâ”€â”€ .gitignore
-   â”œâ”€â”€ app.py
-   â”œâ”€â”€ chalicelib
-   â”‚Â Â â”œâ”€â”€ **init**.py
-   â”‚Â Â â”œâ”€â”€ db.py
-   â”‚Â Â â””â”€â”€ rekognition.py
-   â”œâ”€â”€ recordresources.py
-   â”œâ”€â”€ requirements.txt
-   â””â”€â”€ resources.json
+$ tree -a .
+├── .chalice
+│   ├── config.json
+│   └── policy-dev.json
+├── .gitignore
+├── app.py
+├── chalicelib
+│   ├── __init__.py
+│   ├── db.py
+│   └── rekognition.py
+├── recordresources.py
+├── requirements.txt
+└── resources.json
 ```
 
 Note there will be more files listed with `tree` assuming you already
@@ -604,26 +663,53 @@ Integrate the newly created DynamoDB table into the Chalice application.
 
 2. Import `os` and the `chalicelib.db` module in your `app.py` file:
 
-.. literalinclude:: ../../../code/media-query/04-s3-event/app.py
-:linenos:
-:lines: 1-6
-:emphasize-lines: 1,5
+```java
+import os
+
+import boto3
+from chalice import Chalice
+from chalicelib import db
+from chalicelib import rekognition
+```
 
 3. Add a helper function for instantiating a `db.DynamoMediaDB` class using
    the DynamoDB table name stored as the environment variable
    `MEDIA_TABLE_NAME`:
 
-.. literalinclude:: ../../../code/media-query/04-s3-event/app.py
-:linenos:
-:lines: 1-20
-:emphasize-lines: 10,14-20
+```java
+import os
+
+import boto3
+from chalice import Chalice
+from chalicelib import db
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_MEDIA_DB = None
+_REKOGNITION_CLIENT = None
+
+
+def get_media_db():
+    global _MEDIA_DB
+    if _MEDIA_DB is None:
+        _MEDIA_DB = db.DynamoMediaDB(
+            boto3.resource('dynamodb').Table(
+                os.environ['MEDIA_TABLE_NAME']))
+    return _MEDIA_DB
+```
 
 4. Update the `detect_labels_on_image` Lambda function to save the image
    along with the detected labels to the database:
 
-   .. literalinclude:: ../../../code/media-query/04-s3-event/app.py
-   :lines: 31-36
-   :emphasize-lines: 5-6
+```java
+@app.lambda_function()
+def detect_labels_on_image(event, context):
+    bucket = event['Bucket']
+    key = event['Key']
+    labels = get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+    get_media_db().add_media_file(key, media_type=db.IMAGE_TYPE, labels=labels)
+```
 
 ### Verification
 
@@ -653,8 +739,44 @@ environment variables. It will be used in the next part of the tutorial.
 
 2. Ensure the contents of the `app.py` file is:
 
-.. literalinclude:: ../../../code/media-query/04-s3-event/app.py
-:linenos:
+```java
+import os
+
+import boto3
+from chalice import Chalice
+from chalicelib import db
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_MEDIA_DB = None
+_REKOGNITION_CLIENT = None
+
+
+def get_media_db():
+    global _MEDIA_DB
+    if _MEDIA_DB is None:
+        _MEDIA_DB = db.DynamoMediaDB(
+            boto3.resource('dynamodb').Table(
+                os.environ['MEDIA_TABLE_NAME']))
+    return _MEDIA_DB
+
+
+def get_rekognition_client():
+    global _REKOGNITION_CLIENT
+    if _REKOGNITION_CLIENT is None:
+        _REKOGNITION_CLIENT = rekognition.RekognitonClient(
+            boto3.client('rekognition'))
+    return _REKOGNITION_CLIENT
+
+
+@app.lambda_function()
+def detect_labels_on_image(event, context):
+    bucket = event['Bucket']
+    key = event['Key']
+    labels = get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+    get_media_db().add_media_file(key, media_type=db.IMAGE_TYPE, labels=labels)
+```
 
 ## Redeploy the Chalice application
 
@@ -774,24 +896,89 @@ def handle_object_created(event):
 3. Add the tuple `_SUPPORTED_IMAGE_EXTENSTIONS` representing a list of
    supported image extensions:
 
-   .. literalinclude:: ../../../code/media-query/05-s3-delete-event/app.py
-   :lines: 12-15
+```java
+_SUPPORTED_IMAGE_EXTENSIONS = (
+    '.jpg',
+    '.png',
+)
+```
 
 4. Update the `handle_object_created` function to use the new `event`
    argument of type `S3Event <https://chalice.readthedocs.io/en/latest/api.html#S3Event>`\_\_
    and only do object detection and database additions on specific image
    file extensions:
 
-   .. literalinclude:: ../../../code/media-query/05-s3-delete-event/app.py
-   :lines: 35-48
-   :emphasize-lines: 4-6,8-9,12-14
+```java
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectCreated:*'])
+def handle_object_created(event):
+    if _is_image(event.key):
+        _handle_created_image(bucket=event.bucket, key=event.key)
+
+
+def _is_image(key):
+    return key.endswith(_SUPPORTED_IMAGE_EXTENSIONS)
+
+
+def _handle_created_image(bucket, key):
+    labels = get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+    get_media_db().add_media_file(key, media_type=db.IMAGE_TYPE, labels=labels)
+```
 
 Validation
 
 1. Ensure the contents of the `app.py` file is:
 
-.. literalinclude:: ../../../code/media-query/05-s3-delete-event/app.py
-:linenos:
+```java
+import os
+
+import boto3
+from chalice import Chalice
+from chalicelib import db
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_MEDIA_DB = None
+_REKOGNITION_CLIENT = None
+_SUPPORTED_IMAGE_EXTENSIONS = (
+    '.jpg',
+    '.png',
+)
+
+
+def get_media_db():
+    global _MEDIA_DB
+    if _MEDIA_DB is None:
+        _MEDIA_DB = db.DynamoMediaDB(
+            boto3.resource('dynamodb').Table(
+                os.environ['MEDIA_TABLE_NAME']))
+    return _MEDIA_DB
+
+
+def get_rekognition_client():
+    global _REKOGNITION_CLIENT
+    if _REKOGNITION_CLIENT is None:
+        _REKOGNITION_CLIENT = rekognition.RekognitonClient(
+            boto3.client('rekognition'))
+    return _REKOGNITION_CLIENT
+
+
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectCreated:*'])
+def handle_object_created(event):
+    if _is_image(event.key):
+        _handle_created_image(bucket=event.bucket, key=event.key)
+
+
+def _is_image(key):
+    return key.endswith(_SUPPORTED_IMAGE_EXTENSIONS)
+
+
+def _handle_created_image(bucket, key):
+    labels = get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+    get_media_db().add_media_file(key, media_type=db.IMAGE_TYPE, labels=labels)
+```
 
 ## Redeploy the Chalice application
 
@@ -910,15 +1097,75 @@ the S3 bucket and if it is an image, removes the image from the table.
    is triggered whenever an object gets deleted from the bucket and
    deletes the item from table if it is an image:
 
-.. literalinclude:: ../../../code/media-query/06-web-api/app.py
-:lines: 42-46
+```java
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectRemoved:*'])
+def handle_object_removed(event):
+    if _is_image(event.key):
+        get_media_db().delete_media_file(event.key)
+```
 
 ### Verification
 
 1. Ensure the contents of the `app.py` file is:
 
-.. literalinclude:: ../../../code/media-query/06-web-api/app.py
-:linenos:
+```java
+import os
+
+import boto3
+from chalice import Chalice
+from chalicelib import db
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_MEDIA_DB = None
+_REKOGNITION_CLIENT = None
+_SUPPORTED_IMAGE_EXTENSIONS = (
+    '.jpg',
+    '.png',
+)
+
+
+def get_media_db():
+    global _MEDIA_DB
+    if _MEDIA_DB is None:
+        _MEDIA_DB = db.DynamoMediaDB(
+            boto3.resource('dynamodb').Table(
+                os.environ['MEDIA_TABLE_NAME']))
+    return _MEDIA_DB
+
+
+def get_rekognition_client():
+    global _REKOGNITION_CLIENT
+    if _REKOGNITION_CLIENT is None:
+        _REKOGNITION_CLIENT = rekognition.RekognitonClient(
+            boto3.client('rekognition'))
+    return _REKOGNITION_CLIENT
+
+
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectCreated:*'])
+def handle_object_created(event):
+    if _is_image(event.key):
+        _handle_created_image(bucket=event.bucket, key=event.key)
+
+
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectRemoved:*'])
+def handle_object_removed(event):
+    if _is_image(event.key):
+        get_media_db().delete_media_file(event.key)
+
+
+def _is_image(key):
+    return key.endswith(_SUPPORTED_IMAGE_EXTENSIONS)
+
+
+def _handle_created_image(bucket, key):
+    labels = get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+    get_media_db().add_media_file(key, media_type=db.IMAGE_TYPE, labels=labels)
+```
 
 ## Redeploy the Chalice application
 
@@ -1044,16 +1291,108 @@ users to query on `startswith`, `media-type`, and `label`.
    `app.current_request <https://chalice.readthedocs.io/en/latest/api.html#Request>`\_\_
    object and query the database for the media files:
 
-   .. literalinclude:: ../../../code/media-query/07-videos/app.py
-   :lines: 50-55,64-75
+```java
+@app.route('/')
+def list_media_files():
+    params = {}
+    if app.current_request.query_params:
+        params = _extract_db_list_params(app.current_request.query_params)
+    return get_media_db().list_media_files(**params)
+
+
+def _extract_db_list_params(query_params):
+    valid_query_params = [
+        'startswith',
+        'media-type',
+        'label'
+    ]
+    return {
+        k.replace('-', '_'): v
+        for k, v in query_params.items() if k in valid_query_params
+    }
+```
 
 ### Verification
 
 1. Ensure the contents of the `app.py` file is:
 
-.. literalinclude:: ../../../code/media-query/07-videos/app.py
-:linenos:
-:lines: 1-4,6-55,64-84
+```java
+import os
+
+import boto3
+from chalice import Chalice
+from chalicelib import db
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_MEDIA_DB = None
+_REKOGNITION_CLIENT = None
+_SUPPORTED_IMAGE_EXTENSIONS = (
+    '.jpg',
+    '.png',
+)
+
+
+def get_media_db():
+    global _MEDIA_DB
+    if _MEDIA_DB is None:
+        _MEDIA_DB = db.DynamoMediaDB(
+            boto3.resource('dynamodb').Table(
+                os.environ['MEDIA_TABLE_NAME']))
+    return _MEDIA_DB
+
+
+def get_rekognition_client():
+    global _REKOGNITION_CLIENT
+    if _REKOGNITION_CLIENT is None:
+        _REKOGNITION_CLIENT = rekognition.RekognitonClient(
+            boto3.client('rekognition'))
+    return _REKOGNITION_CLIENT
+
+
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectCreated:*'])
+def handle_object_created(event):
+    if _is_image(event.key):
+        _handle_created_image(bucket=event.bucket, key=event.key)
+
+
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectRemoved:*'])
+def handle_object_removed(event):
+    if _is_image(event.key):
+        get_media_db().delete_media_file(event.key)
+
+
+@app.route('/')
+def list_media_files():
+    params = {}
+    if app.current_request.query_params:
+        params = _extract_db_list_params(app.current_request.query_params)
+    return get_media_db().list_media_files(**params)
+
+
+def _extract_db_list_params(query_params):
+    valid_query_params = [
+        'startswith',
+        'media-type',
+        'label'
+    ]
+    return {
+        k.replace('-', '_'): v
+        for k, v in query_params.items() if k in valid_query_params
+    }
+
+
+def _is_image(key):
+    return key.endswith(_SUPPORTED_IMAGE_EXTENSIONS)
+
+
+def _handle_created_image(bucket, key):
+    labels = get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+    get_media_db().add_media_file(key, media_type=db.IMAGE_TYPE, labels=labels)
+```
 
 2. Install `HTTPie <https://httpie.org/>`\_\_ to query the API::
 
@@ -1141,31 +1480,127 @@ using the `name` of the item.
 
 1. Import `chalice.NotFoundError` in the `app.py` file:
 
-.. literalinclude:: ../../../code/media-query/07-videos/app.py
-:linenos:
-:lines: 1-7
-:emphasize-lines: 5
+```java
+import os
+
+import boto3
+from chalice import Chalice
+from chalice import NotFoundError
+from chalicelib import db
+from chalicelib import rekognition
+```
 
 2. In the `app.py` file, define the function `get_media_file()` decorated
    by `app.route('/{name}')`:
 
-   .. literalinclude:: ../../../code/media-query/07-videos/app.py
-   :lines: 58-59
+```java
+@app.route('/{name}')
+def get_media_file(name):
+```
 
 3. Within the `get_media_file()` function, query the media item using the
    `name` parameter and raise a `chalice.NotFoundError` exception when the
    `name` does not exist in the database:
 
-   .. literalinclude:: ../../../code/media-query/07-videos/app.py
-   :lines: 58-63
+```java
+@app.route('/{name}')
+def get_media_file(name):
+    item = get_media_db().get_media_file(name)
+    if item is None:
+        raise NotFoundError('Media file (%s) not found' % name)
+    return item
+```
 
 ### Verification
 
 1. Ensure the contents of the `app.py` file is:
 
-.. literalinclude:: ../../../code/media-query/07-videos/app.py
-:linenos:
-:lines: 1-84
+```java
+import os
+
+import boto3
+from chalice import Chalice
+from chalice import NotFoundError
+from chalicelib import db
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_MEDIA_DB = None
+_REKOGNITION_CLIENT = None
+_SUPPORTED_IMAGE_EXTENSIONS = (
+    '.jpg',
+    '.png',
+)
+
+
+def get_media_db():
+    global _MEDIA_DB
+    if _MEDIA_DB is None:
+        _MEDIA_DB = db.DynamoMediaDB(
+            boto3.resource('dynamodb').Table(
+                os.environ['MEDIA_TABLE_NAME']))
+    return _MEDIA_DB
+
+
+def get_rekognition_client():
+    global _REKOGNITION_CLIENT
+    if _REKOGNITION_CLIENT is None:
+        _REKOGNITION_CLIENT = rekognition.RekognitonClient(
+            boto3.client('rekognition'))
+    return _REKOGNITION_CLIENT
+
+
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectCreated:*'])
+def handle_object_created(event):
+    if _is_image(event.key):
+        _handle_created_image(bucket=event.bucket, key=event.key)
+
+
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectRemoved:*'])
+def handle_object_removed(event):
+    if _is_image(event.key):
+        get_media_db().delete_media_file(event.key)
+
+
+@app.route('/')
+def list_media_files():
+    params = {}
+    if app.current_request.query_params:
+        params = _extract_db_list_params(app.current_request.query_params)
+    return get_media_db().list_media_files(**params)
+
+
+@app.route('/{name}')
+def get_media_file(name):
+    item = get_media_db().get_media_file(name)
+    if item is None:
+        raise NotFoundError('Media file (%s) not found' % name)
+    return item
+
+
+def _extract_db_list_params(query_params):
+    valid_query_params = [
+        'startswith',
+        'media-type',
+        'label'
+    ]
+    return {
+        k.replace('-', '_'): v
+        for k, v in query_params.items() if k in valid_query_params
+    }
+
+
+def _is_image(key):
+    return key.endswith(_SUPPORTED_IMAGE_EXTENSIONS)
+
+
+def _handle_created_image(bucket, key):
+    labels = get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+    get_media_db().add_media_file(key, media_type=db.IMAGE_TYPE, labels=labels)
+```
 
 2. If the local server is not still running, run `chalice local` to
    restart the local API server::
@@ -1568,24 +2003,34 @@ video with the labels into the database.
 
 1. Import `json` at the top of the `app.py` file:
 
-   .. literalinclude:: ../../../code/media-query/final/app.py
-   :lines: 1
+```java
+import json
+```
 
 2. Then, define the function `add_video_file()` that uses the
    `app.on_sns_message <https://chalice.readthedocs.io/en/latest/api.html#Chalice.on_sns_message>`\_\_
    decorator:
 
-   .. literalinclude:: ../../../code/media-query/final/app.py
-   :lines: 58-59
+```java
+@app.on_sns_message(topic=os.environ['VIDEO_TOPIC_NAME'])
+def add_video_file(event):
+```
 
 3. Update the `add_video_file()` function, to process the `event` argument
    of type `SNSEvent <https://chalice.readthedocs.io/en/latest/api.html#SNSEvent>`\_\_
    by retrieving the job ID from the message, retrieve the processed labels
    from Rekognition, and add the video to the database:
 
-   .. literalinclude:: ../../../code/media-query/final/app.py
-   :lines: 58-65
-   :emphasize-lines: 3-8
+```java
+@app.on_sns_message(topic=os.environ['VIDEO_TOPIC_NAME'])
+def add_video_file(event):
+    message = json.loads(event.message)
+    labels = get_rekognition_client().get_video_job_labels(message['JobId'])
+    get_media_db().add_media_file(
+        name=message['Video']['S3ObjectName'],
+        media_type=db.VIDEO_TYPE,
+        labels=labels)
+```
 
 4. Run `chalice deploy` to deploy the new Lambda function::
 
@@ -1720,23 +2165,49 @@ delete the video whenever the video is deleted from S3.
 1. Add the tuple `_SUPPORTED_VIDEO_EXTENSTIONS` representing a list of
    supported video extensions:
 
-   .. literalinclude:: ../../../code/media-query/final/app.py
-   :lines: 18-22
+```java
+_SUPPORTED_VIDEO_EXTENSIONS = (
+    '.mp4',
+    '.flv',
+    '.mov',
+)
+```
 
 2. Update the `handle_object_created` function to start a video label
    detection job for videos uploaded to the S3 bucket and have the completion
    notification be published to the SNS topic:
 
-   .. literalinclude:: ../../../code/media-query/final/app.py
-   :lines: 42-50,105-113
-   :emphasize-lines: 6-7,10-11,14-18
+```java
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectCreated:*'])
+def handle_object_created(event):
+    if _is_image(event.key):
+        _handle_created_image(bucket=event.bucket, key=event.key)
+    elif _is_video(event.key):
+        _handle_created_video(bucket=event.bucket, key=event.key)
+
+
+def _is_video(key):
+    return key.endswith(_SUPPORTED_VIDEO_EXTENSIONS)
+
+
+def _handle_created_video(bucket, key):
+    get_rekognition_client().start_video_label_job(
+        bucket=bucket, key=key, topic_arn=os.environ['VIDEO_TOPIC_ARN'],
+        role_arn=os.environ['VIDEO_ROLE_ARN']
+    )
+```
 
 3. Update the `handle_object_removed` function to delete items from the
    table that are videos as well:
 
-   .. literalinclude:: ../../../code/media-query/final/app.py
-   :lines: 51-55
-   :emphasize-lines: 4
+```java
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectRemoved:*'])
+def handle_object_removed(event):
+    if _is_image(event.key) or _is_video(event.key):
+        get_media_db().delete_media_file(event.key)
+```
 
 4. Run `chalice deploy` to deploy the updated Chalice application::
 
@@ -1841,7 +2312,121 @@ delete the video whenever the video is deleted from S3.
 Congratulations! You have now completed this tutorial. Below is the final code
 that you should have wrote in the `app.py` of your Chalice application:
 
-.. literalinclude:: ../../../code/media-query/final/app.py
+```java
+import json
+import os
+
+import boto3
+from chalice import Chalice
+from chalice import NotFoundError
+from chalicelib import db
+from chalicelib import rekognition
+
+app = Chalice(app_name='media-query')
+
+_MEDIA_DB = None
+_REKOGNITION_CLIENT = None
+_SUPPORTED_IMAGE_EXTENSIONS = (
+    '.jpg',
+    '.png',
+)
+_SUPPORTED_VIDEO_EXTENSIONS = (
+    '.mp4',
+    '.flv',
+    '.mov',
+)
+
+
+def get_media_db():
+    global _MEDIA_DB
+    if _MEDIA_DB is None:
+        _MEDIA_DB = db.DynamoMediaDB(
+            boto3.resource('dynamodb').Table(
+                os.environ['MEDIA_TABLE_NAME']))
+    return _MEDIA_DB
+
+
+def get_rekognition_client():
+    global _REKOGNITION_CLIENT
+    if _REKOGNITION_CLIENT is None:
+        _REKOGNITION_CLIENT = rekognition.RekognitonClient(
+            boto3.client('rekognition'))
+    return _REKOGNITION_CLIENT
+
+
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectCreated:*'])
+def handle_object_created(event):
+    if _is_image(event.key):
+        _handle_created_image(bucket=event.bucket, key=event.key)
+    elif _is_video(event.key):
+        _handle_created_video(bucket=event.bucket, key=event.key)
+
+
+@app.on_s3_event(bucket=os.environ['MEDIA_BUCKET_NAME'],
+                 events=['s3:ObjectRemoved:*'])
+def handle_object_removed(event):
+    if _is_image(event.key) or _is_video(event.key):
+        get_media_db().delete_media_file(event.key)
+
+
+@app.on_sns_message(topic=os.environ['VIDEO_TOPIC_NAME'])
+def add_video_file(event):
+    message = json.loads(event.message)
+    labels = get_rekognition_client().get_video_job_labels(message['JobId'])
+    get_media_db().add_media_file(
+        name=message['Video']['S3ObjectName'],
+        media_type=db.VIDEO_TYPE,
+        labels=labels)
+
+
+@app.route('/')
+def list_media_files():
+    params = {}
+    if app.current_request.query_params:
+        params = _extract_db_list_params(app.current_request.query_params)
+    return get_media_db().list_media_files(**params)
+
+
+@app.route('/{name}')
+def get_media_file(name):
+    item = get_media_db().get_media_file(name)
+    if item is None:
+        raise NotFoundError('Media file (%s) not found' % name)
+    return item
+
+
+def _extract_db_list_params(query_params):
+    valid_query_params = [
+        'startswith',
+        'media-type',
+        'label'
+    ]
+    return {
+        k.replace('-', '_'): v
+        for k, v in query_params.items() if k in valid_query_params
+    }
+
+
+def _is_image(key):
+    return key.endswith(_SUPPORTED_IMAGE_EXTENSIONS)
+
+
+def _handle_created_image(bucket, key):
+    labels = get_rekognition_client().get_image_labels(bucket=bucket, key=key)
+    get_media_db().add_media_file(key, media_type=db.IMAGE_TYPE, labels=labels)
+
+
+def _is_video(key):
+    return key.endswith(_SUPPORTED_VIDEO_EXTENSIONS)
+
+
+def _handle_created_video(bucket, key):
+    get_rekognition_client().start_video_label_job(
+        bucket=bucket, key=key, topic_arn=os.environ['VIDEO_TOPIC_ARN'],
+        role_arn=os.environ['VIDEO_ROLE_ARN']
+    )
+```
 
 Feel free to add your own media files and/or build additional logic on
 top of this application. For the complete final application, see the
