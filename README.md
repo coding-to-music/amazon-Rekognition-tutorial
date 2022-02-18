@@ -77,8 +77,8 @@ To interact with the Rekognition API, the AWS CLI will need to be installed.
 1. Check to see the CLI is installed::
 
 ```java
-    $ aws --version
-    aws-cli/1.15.60 Python/3.6.5 Darwin/15.6.0 botocore/1.10.59
+$ aws --version
+aws-cli/1.15.60 Python/3.6.5 Darwin/15.6.0 botocore/1.10.59
 ```
 
 The version of the CLI must be version 1.15.60 or greater.
@@ -96,8 +96,8 @@ upgrade to the latest version of the AWS CLI.
 1. Run the following command::
 
 ```java
-   $ aws --version
-   aws-cli/1.15.60 Python/3.6.1 Darwin/15.6.0 botocore/1.10.59
+$ aws --version
+aws-cli/1.15.60 Python/3.6.1 Darwin/15.6.0 botocore/1.10.59
 ```
 
 The version displayed of the CLI must be version 1.15.60 or greater.
@@ -111,14 +111,14 @@ Use the Rekognition API via the AWS CLI to detect labels in an image.
 1. If you have not already done so, clone the repository for this workshop::
 
 ```java
-    $ git clone https://github.com/aws-samples/chalice-workshop.git
+$ git clone https://github.com/aws-samples/chalice-workshop.git
 ```
 
 2. Use the `detect-labels` command to detect labels on a sample image::
 
 ```java
-    $ aws rekognition detect-labels \
-        --image-bytes fileb://chalice-workshop/code/media-query/final/assets/sample.jpg
+$ aws rekognition detect-labels \
+   --image-bytes fileb://chalice-workshop/code/media-query/final/assets/sample.jpg
 ```
 
 ### Verification
@@ -126,38 +126,38 @@ Use the Rekognition API via the AWS CLI to detect labels in an image.
 The output of the `detect-labels` command should be::
 
 ```java
-    {
-        "Labels": [
-            {
-                "Confidence": 85.75711822509766,
-                "Name": "Animal"
-            },
-            {
-                "Confidence": 85.75711822509766,
-                "Name": "Canine"
-            },
-            {
-                "Confidence": 85.75711822509766,
-                "Name": "Dog"
-            },
-            {
-                "Confidence": 85.75711822509766,
-                "Name": "German Shepherd"
-            },
-            {
-                "Confidence": 85.75711822509766,
-                "Name": "Mammal"
-            },
-            {
-                "Confidence": 85.75711822509766,
-                "Name": "Pet"
-            },
-            {
-                "Confidence": 84.56783294677734,
-                "Name": "Collie"
-            }
-        ]
-    }
+{
+   "Labels": [
+      {
+            "Confidence": 85.75711822509766,
+            "Name": "Animal"
+      },
+      {
+            "Confidence": 85.75711822509766,
+            "Name": "Canine"
+      },
+      {
+            "Confidence": 85.75711822509766,
+            "Name": "Dog"
+      },
+      {
+            "Confidence": 85.75711822509766,
+            "Name": "German Shepherd"
+      },
+      {
+            "Confidence": 85.75711822509766,
+            "Name": "Mammal"
+      },
+      {
+            "Confidence": 85.75711822509766,
+            "Name": "Pet"
+      },
+      {
+            "Confidence": 84.56783294677734,
+            "Name": "Collie"
+      }
+   ]
+}
 ```
 
 https://chalice-workshop.readthedocs.io/en/latest/media-query/02-chalice-with-rekognition.html
@@ -173,8 +173,8 @@ bucket `some-bucket` under the key `sample.jpg`, we will be able to invoke
 a Lambda function that return the labels Rekognition detected::
 
 ```java
-    $ echo '{"Bucket": "some-bucket", "Key": "sample.jpg"}' | chalice invoke --name detect_labels_on_image
-    ["Animal", "Canine", "Dog", "German Shepherd", "Mammal", "Pet", "Collie"]
+$ echo '{"Bucket": "some-bucket", "Key": "sample.jpg"}' | chalice invoke --name detect_labels_on_image
+["Animal", "Canine", "Dog", "German Shepherd", "Mammal", "Pet", "Collie"]
 ```
 
 For this section, we will be doing the following to create this version of the
@@ -194,7 +194,7 @@ Create the new Chalice project for the Media Query application.
     command::
 
 ```java
-        $ chalice new-project media-query
+$ chalice new-project media-query
 ```
 
 ### Verification
@@ -203,8 +203,8 @@ To ensure that the project was created, list the contents of the newly created
 `media-query` directory::
 
 ```java
-    $ ls media-query
-    app.py           requirements.txt
+$ ls media-query
+app.py           requirements.txt
 ```
 
 It should contain an `app.py` file and a `requirements.txt` file.
@@ -219,7 +219,7 @@ Copy over starting files to facilitate development of the application
     into your `media-query` directory::
 
 ```java
-    $ cp -r chalice-workshop/code/media-query/02-chalice-with-rekognition/. media-query/
+$ cp -r chalice-workshop/code/media-query/02-chalice-with-rekognition/. media-query/
 ```
 
     .. note::
@@ -233,7 +233,7 @@ Copy over starting files to facilitate development of the application
     Part 5::
 
 ```java
-        media-query$  cp -r ../chalice-workshop/code/media-query/05-s3-delete-event/. ./
+media-query$  cp -r ../chalice-workshop/code/media-query/05-s3-delete-event/. ./
 ```
 
 ### Verification
@@ -294,7 +294,7 @@ on an image stored in a S3 bucket.
 1. Move into the `media-query` directory::
 
 ```java
-   $ cd media-query
+$ cd media-query
 ```
 
 2. Add `boto3`, the AWS SDK for Python, as a dependency in the
@@ -309,9 +309,9 @@ boto3<1.8.0
    should only consist of the following lines::
 
 ```java
-   from chalice import Chalice
+from chalice import Chalice
 
-   app = Chalice(app_name='media-query')
+app = Chalice(app_name='media-query')
 ```
 
 4. Import `boto3` and the `chalicelib.rekognition` module in your
@@ -423,13 +423,13 @@ Create a S3 bucket for uploading images and use with the Chalice application.
 1. Retrieve and store the name of the S3 bucket using the AWS CLI::
 
 ```java
-   $ MEDIA_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name media-query --query "Stacks[0].Outputs[?OutputKey=='MediaBucketName'].OutputValue" --output text)
+$ MEDIA_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name media-query --query "Stacks[0].Outputs[?OutputKey=='MediaBucketName'].OutputValue" --output text)
 ```
 
 2. Ensure you can access the S3 bucket by listing its contents::
 
 ```java
-   $ aws s3 ls $MEDIA_BUCKET_NAME
+$ aws s3 ls $MEDIA_BUCKET_NAME
 ```
 
 Note that the bucket should be empty.
@@ -443,19 +443,19 @@ Deploy the chalice application.
 1. Install the dependencies of the Chalice application::
 
 ```java
-   $ pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 2. Run `chalice deploy` to deploy the application::
 
 ```java
-   $ chalice deploy
-   Creating deployment package.
-   Creating IAM role: media-query-dev-detect_labels_on_image
-   Creating lambda function: media-query-dev-detect_labels_on_image
-   Resources deployed:
+$ chalice deploy
+Creating deployment package.
+Creating IAM role: media-query-dev-detect_labels_on_image
+Creating lambda function: media-query-dev-detect_labels_on_image
+Resources deployed:
 
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-detect_labels_on_image
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-detect_labels_on_image
 ```
 
 ### Verification
@@ -463,25 +463,25 @@ Deploy the chalice application.
 1. Upload the sample workshop image to the S3 bucket::
 
 ```java
-   $ aws s3 cp ../chalice-workshop/code/media-query/final/assets/sample.jpg s3://$MEDIA_BUCKET_NAME
+$ aws s3 cp ../chalice-workshop/code/media-query/final/assets/sample.jpg s3://$MEDIA_BUCKET_NAME
 ```
 
 2. Create a `sample-event.json` file to use with `chalice invoke`::
 
 ```java
-   $ echo "{\"Bucket\": \"$MEDIA_BUCKET_NAME\", \"Key\": \"sample.jpg\"}" > sample-event.json
+$ echo "{\"Bucket\": \"$MEDIA_BUCKET_NAME\", \"Key\": \"sample.jpg\"}" > sample-event.json
 ```
 
 3. Run `chalice invoke` on the `detect_labels_on_image` Lambda function::
 
 ```java
-   $ chalice invoke --name detect_labels_on_image < sample-event.json
+$ chalice invoke --name detect_labels_on_image < sample-event.json
 ```
 
 It should return the following labels in the output::
 
 ```java
-   ["Animal", "Canine", "Dog", "German Shepherd", "Mammal", "Pet", "Collie"]
+["Animal", "Canine", "Dog", "German Shepherd", "Mammal", "Pet", "Collie"]
 ```
 
 https://chalice-workshop.readthedocs.io/en/latest/media-query/03-add-db.html
@@ -510,14 +510,14 @@ Copy over files needed for integrating the DynamoDB table into the application
    module into the `chalicelib` package::
 
 ```java
-   $ cp ../chalice-workshop/code/media-query/03-add-db/chalicelib/db.py chalicelib/
+$ cp ../chalice-workshop/code/media-query/03-add-db/chalicelib/db.py chalicelib/
 ```
 
 2. Using `media-query` as the current working directory, copy over an updated
    version of the `resources.json` file::
 
 ```java
-   $ cp ../chalice-workshop/code/media-query/03-add-db/resources.json .
+$ cp ../chalice-workshop/code/media-query/03-add-db/resources.json .
 ```
 
 ### Verification
@@ -548,47 +548,47 @@ output above are required.
 2. Ensure the contents of the `resources.json` is now the following::
 
 ```java
-   $ cat resources.json
-   {
-   "Outputs": {
-   "MediaBucketName": {
-   "Value": {
-   "Ref": "MediaBucket"
-   }
-   },
-   "MediaTableName": {
-   "Value": {
-   "Ref": "MediaTable"
-   }
-   }
-   },
-   "Resources": {
-   "MediaBucket": {
-   "Type": "AWS::S3::Bucket"
-   },
-   "MediaTable": {
-   "Properties": {
-   "AttributeDefinitions": [
-   {
-   "AttributeName": "name",
-   "AttributeType": "S"
-   }
-   ],
-   "KeySchema": [
-   {
-   "AttributeName": "name",
-   "KeyType": "HASH"
-   }
-   ],
-   "ProvisionedThroughput": {
-   "ReadCapacityUnits": 5,
-   "WriteCapacityUnits": 5
-   }
-   },
-   "Type": "AWS::DynamoDB::Table"
-   }
-   }
-   }
+$ cat resources.json
+{
+"Outputs": {
+"MediaBucketName": {
+"Value": {
+"Ref": "MediaBucket"
+}
+},
+"MediaTableName": {
+"Value": {
+"Ref": "MediaTable"
+}
+}
+},
+"Resources": {
+"MediaBucket": {
+"Type": "AWS::S3::Bucket"
+},
+"MediaTable": {
+"Properties": {
+"AttributeDefinitions": [
+{
+"AttributeName": "name",
+"AttributeType": "S"
+}
+],
+"KeySchema": [
+{
+"AttributeName": "name",
+"KeyType": "HASH"
+}
+],
+"ProvisionedThroughput": {
+"ReadCapacityUnits": 5,
+"WriteCapacityUnits": 5
+}
+},
+"Type": "AWS::DynamoDB::Table"
+}
+}
+}
 ```
 
 ## Create a DynamoDB table
@@ -603,7 +603,7 @@ bucket.
    DynamoDB ::
 
 ```java
-   $ aws cloudformation deploy --template-file resources.json --stack-name media-query
+$ aws cloudformation deploy --template-file resources.json --stack-name media-query
 ```
 
 ### Verification
@@ -611,41 +611,41 @@ bucket.
 1. Retrieve and store the name of the DynamoDB table using the AWS CLI::
 
 ```java
-   $ MEDIA_TABLE_NAME=$(aws cloudformation describe-stacks --stack-name media-query --query "Stacks[0].Outputs[?OutputKey=='MediaTableName'].OutputValue" --output text)
+$ MEDIA_TABLE_NAME=$(aws cloudformation describe-stacks --stack-name media-query --query "Stacks[0].Outputs[?OutputKey=='MediaTableName'].OutputValue" --output text)
 ```
 
 2. Ensure the existence of the table using the `describe-table` CLI command::
 
 ```java
-   $ aws dynamodb describe-table --table-name $MEDIA_TABLE_NAME
-   {
-   "Table": {
-   "AttributeDefinitions": [
-   {
-   "AttributeName": "name",
-   "AttributeType": "S"
-   }
-   ],
-   "TableName": "media-query-MediaTable-10QEPR0O8DOT4",
-   "KeySchema": [
-   {
-   "AttributeName": "name",
-   "KeyType": "HASH"
-   }
-   ],
-   "TableStatus": "ACTIVE",
-   "CreationDateTime": 1531769158.804,
-   "ProvisionedThroughput": {
-   "NumberOfDecreasesToday": 0,
-   "ReadCapacityUnits": 5,
-   "WriteCapacityUnits": 5
-   },
-   "TableSizeBytes": 0,
-   "ItemCount": 0,
-   "TableArn": "arn:aws:dynamodb:us-west-2:123456789123:table/media-query-MediaTable-10QEPR0O8DOT4",
-   "TableId": "00eebe92-d59d-40a2-b5fa-32e16b571cdc"
-   }
-   }
+$ aws dynamodb describe-table --table-name $MEDIA_TABLE_NAME
+{
+"Table": {
+"AttributeDefinitions": [
+{
+"AttributeName": "name",
+"AttributeType": "S"
+}
+],
+"TableName": "media-query-MediaTable-10QEPR0O8DOT4",
+"KeySchema": [
+{
+"AttributeName": "name",
+"KeyType": "HASH"
+}
+],
+"TableStatus": "ACTIVE",
+"CreationDateTime": 1531769158.804,
+"ProvisionedThroughput": {
+"NumberOfDecreasesToday": 0,
+"ReadCapacityUnits": 5,
+"WriteCapacityUnits": 5
+},
+"TableSizeBytes": 0,
+"ItemCount": 0,
+"TableArn": "arn:aws:dynamodb:us-west-2:123456789123:table/media-query-MediaTable-10QEPR0O8DOT4",
+"TableId": "00eebe92-d59d-40a2-b5fa-32e16b571cdc"
+}
+}
 ```
 
 ## Integrate the DynamoDB table
@@ -658,7 +658,7 @@ Integrate the newly created DynamoDB table into the Chalice application.
    application by running the `recordresources.py` script::
 
 ```java
-   $ python recordresources.py --stack-name media-query
+$ python recordresources.py --stack-name media-query
 ```
 
 2. Import `os` and the `chalicelib.db` module in your `app.py` file:
@@ -717,21 +717,21 @@ def detect_labels_on_image(event, context):
    for `MEDIA_TABLE_NAME`::
 
 ```java
-   $ cat .chalice/config.json
-   {
-   "version": "2.0",
-   "app_name": "media-query",
-   "stages": {
-   "dev": {
-   "api_gateway_stage": "api",
-   "autogen_policy": false,
-   "environment_variables": {
-   "MEDIA_TABLE_NAME": "media-query-MediaTable-10QEPR0O8DOT4",
-   "MEDIA_BUCKET_NAME": "media-query-mediabucket-fb8oddjbslv1"
-   }
-   }
-   }
-   }
+$ cat .chalice/config.json
+{
+"version": "2.0",
+"app_name": "media-query",
+"stages": {
+"dev": {
+"api_gateway_stage": "api",
+"autogen_policy": false,
+"environment_variables": {
+"MEDIA_TABLE_NAME": "media-query-MediaTable-10QEPR0O8DOT4",
+"MEDIA_BUCKET_NAME": "media-query-mediabucket-fb8oddjbslv1"
+}
+}
+}
+}
 ```
 
 Note that the `MEDIA_BUCKET_NAME` will be present as well in the
@@ -787,13 +787,13 @@ Deploy the updated Chalice application.
 1. Run `chalice deploy`::
 
 ```java
-   $ chalice deploy
-   Creating deployment package.
-   Updating policy for IAM role: media-query-dev-detect_labels_on_image
-   Updating lambda function: media-query-dev-detect_labels_on_image
-   Resources deployed:
+$ chalice deploy
+Creating deployment package.
+Updating policy for IAM role: media-query-dev-detect_labels_on_image
+Updating lambda function: media-query-dev-detect_labels_on_image
+Resources deployed:
 
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-detect_labels_on_image
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-detect_labels_on_image
 ```
 
 ### Verification
@@ -1191,54 +1191,54 @@ Resources deployed:
 1. Delete the uploaded `othersample.jpg` object from the previous part::
 
 ```java
-   $ aws s3 rm s3://$MEDIA_BUCKET_NAME/othersample.jpg
+$ aws s3 rm s3://$MEDIA_BUCKET_NAME/othersample.jpg
 ```
 
 2. Use the `scan` CLI command to ensure the object is no longer in the
    table::
 
 ```java
-   $ aws dynamodb scan --table-name $MEDIA_TABLE_NAME
-   {
-   "Items": [
-   {
-   "name": {
-   "S": "sample.jpg"
-   },
-   "labels": {
-   "L": [
-   {
-   "S": "Animal"
-   },
-   {
-   "S": "Canine"
-   },
-   {
-   "S": "Dog"
-   },
-   {
-   "S": "German Shepherd"
-   },
-   {
-   "S": "Mammal"
-   },
-   {
-   "S": "Pet"
-   },
-   {
-   "S": "Collie"
-   }
-   ]
-   },
-   "type": {
-   "S": "image"
-   }
-   }
-   ],
-   "Count": 1,
-   "ScannedCount": 1,
-   "ConsumedCapacity": null
-   }
+$ aws dynamodb scan --table-name $MEDIA_TABLE_NAME
+{
+"Items": [
+{
+"name": {
+"S": "sample.jpg"
+},
+"labels": {
+"L": [
+{
+"S": "Animal"
+},
+{
+"S": "Canine"
+},
+{
+"S": "Dog"
+},
+{
+"S": "German Shepherd"
+},
+{
+"S": "Mammal"
+},
+{
+"S": "Pet"
+},
+{
+"S": "Collie"
+}
+]
+},
+"type": {
+"S": "image"
+}
+}
+],
+"Count": 1,
+"ScannedCount": 1,
+"ConsumedCapacity": null
+}
 ```
 
 If the item still appears, try running the `scan` command after
@@ -1282,8 +1282,8 @@ users to query on `startswith`, `media-type`, and `label`.
    decorator::
 
 ```java
-   @app.route('/')
-   def list_media_files():
+@app.route('/')
+def list_media_files():
 ```
 
 2. Inside of the `list_media_files()` function, extract the query string
@@ -1397,76 +1397,76 @@ def _handle_created_image(bucket, key):
 2. Install `HTTPie <https://httpie.org/>`\_\_ to query the API::
 
 ```java
-   $ pip install httpie
+$ pip install httpie
 ```
 
 3. In a different terminal, run `chalice local` to run the API as a server
    locally::
 
 ```java
-   $ chalice local
+$ chalice local
 ```
 
 4. Use HTTPie to query the API for all images::
 
 ```java
-   $ http 127.0.0.1:8000/
-   HTTP/1.1 200 OK
-   Content-Length: 126
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 13:59:35 GMT
-   Server: BaseHTTP/0.6 Python/3.6.1
+$ http 127.0.0.1:8000/
+HTTP/1.1 200 OK
+Content-Length: 126
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 13:59:35 GMT
+Server: BaseHTTP/0.6 Python/3.6.1
 
-   [
-   {
-   "labels": [
-   "Animal",
-   "Canine",
-   "Dog",
-   "German Shepherd",
-   "Mammal",
-   "Pet",
-   "Collie"
-   ],
-   "name": "sample.jpg",
-   "type": "image"
-   }
-   ]
+[
+{
+"labels": [
+"Animal",
+"Canine",
+"Dog",
+"German Shepherd",
+"Mammal",
+"Pet",
+"Collie"
+],
+"name": "sample.jpg",
+"type": "image"
+}
+]
 ```
 
 5. Use HTTPie to query the API using the query string parameter `label`::
 
 ```java
-   $ http 127.0.0.1:8000/ label==Dog
-   HTTP/1.1 200 OK
-   Content-Length: 126
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 14:01:22 GMT
-   Server: BaseHTTP/0.6 Python/3.6.1
+$ http 127.0.0.1:8000/ label==Dog
+HTTP/1.1 200 OK
+Content-Length: 126
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 14:01:22 GMT
+Server: BaseHTTP/0.6 Python/3.6.1
 
-   [
-   {
-   "labels": [
-   "Animal",
-   "Canine",
-   "Dog",
-   "German Shepherd",
-   "Mammal",
-   "Pet",
-   "Collie"
-   ],
-   "name": "sample.jpg",
-   "type": "image"
-   }
-   ]
-   $ http 127.0.0.1:8000/ label==Person
-   HTTP/1.1 200 OK
-   Content-Length: 2
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 14:01:46 GMT
-   Server: BaseHTTP/0.6 Python/3.6.1
+[
+{
+"labels": [
+"Animal",
+"Canine",
+"Dog",
+"German Shepherd",
+"Mammal",
+"Pet",
+"Collie"
+],
+"name": "sample.jpg",
+"type": "image"
+}
+]
+$ http 127.0.0.1:8000/ label==Person
+HTTP/1.1 200 OK
+Content-Length: 2
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 14:01:46 GMT
+Server: BaseHTTP/0.6 Python/3.6.1
 
-   []
+[]
 ```
 
 Feel free to test out any of the other query string parameters as well.
@@ -1606,48 +1606,48 @@ def _handle_created_image(bucket, key):
    restart the local API server::
 
 ```java
-   $ chalice local
+$ chalice local
 ```
 
 3. Use HTTPie to query the API for the `sample.jpg` image::
 
 ```java
-   $ http 127.0.0.1:8000/sample.jpg
-   HTTP/1.1 200 OK
-   Content-Length: 124
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 14:09:01 GMT
-   Server: BaseHTTP/0.6 Python/3.6.1
+$ http 127.0.0.1:8000/sample.jpg
+HTTP/1.1 200 OK
+Content-Length: 124
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 14:09:01 GMT
+Server: BaseHTTP/0.6 Python/3.6.1
 
-   {
-   "labels": [
-   "Animal",
-   "Canine",
-   "Dog",
-   "German Shepherd",
-   "Mammal",
-   "Pet",
-   "Collie"
-   ],
-   "name": "sample.jpg",
-   "type": "image"
-   }
+{
+"labels": [
+"Animal",
+"Canine",
+"Dog",
+"German Shepherd",
+"Mammal",
+"Pet",
+"Collie"
+],
+"name": "sample.jpg",
+"type": "image"
+}
 ```
 
 4. Use HTTPie to query the API for an image that does not exist::
 
 ```java
-   $ http 127.0.0.1:8000/noexists.jpg
-   HTTP/1.1 404 Not Found
-   Content-Length: 90
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 14:09:34 GMT
-   Server: BaseHTTP/0.6 Python/3.6.1
+$ http 127.0.0.1:8000/noexists.jpg
+HTTP/1.1 404 Not Found
+Content-Length: 90
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 14:09:34 GMT
+Server: BaseHTTP/0.6 Python/3.6.1
 
-   {
-   "Code": "NotFoundError",
-   "Message": "NotFoundError: Media file (noexists.jpg) not found"
-   }
+{
+"Code": "NotFoundError",
+"Message": "NotFoundError: Media file (noexists.jpg) not found"
+}
 ```
 
 ## Redeploy the Chalice application
@@ -1659,23 +1659,23 @@ Deploy the Chalice application based on the updates.
 1. Run `chalice deploy`::
 
 ```java
-   $ chalice deploy
-   Creating deployment package.
-   Updating policy for IAM role: media-query-dev-handle_object_created
-   Updating lambda function: media-query-dev-handle_object_created
-   Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_created
-   Updating policy for IAM role: media-query-dev-handle_object_removed
-   Updating lambda function: media-query-dev-handle_object_removed
-   Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_removed
-   Creating IAM role: media-query-dev-api_handler
-   Creating lambda function: media-query-dev
-   Creating Rest API
-   Resources deployed:
+$ chalice deploy
+Creating deployment package.
+Updating policy for IAM role: media-query-dev-handle_object_created
+Updating lambda function: media-query-dev-handle_object_created
+Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_created
+Updating policy for IAM role: media-query-dev-handle_object_removed
+Updating lambda function: media-query-dev-handle_object_removed
+Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_removed
+Creating IAM role: media-query-dev-api_handler
+Creating lambda function: media-query-dev
+Creating Rest API
+Resources deployed:
 
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_created
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_removed
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev
-   - Rest API URL: https://1lmxgj9bfl.execute-api.us-west-2.amazonaws.com/api/
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_created
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_removed
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev
+- Rest API URL: https://1lmxgj9bfl.execute-api.us-west-2.amazonaws.com/api/
 ```
 
 ### Verification
@@ -1683,59 +1683,59 @@ Deploy the Chalice application based on the updates.
 1. Reupload the `othersample.jpg` image using the CLI::
 
 ```java
-   $ aws s3 cp ../chalice-workshop/code/media-query/final/assets/othersample.jpg s3://$MEDIA_BUCKET_NAME
+$ aws s3 cp ../chalice-workshop/code/media-query/final/assets/othersample.jpg s3://$MEDIA_BUCKET_NAME
 ```
 
 2. Use HTTPie to query the deployed API for all media items::
 
 ```java
-   $ http $(chalice url)
-   HTTP/1.1 200 OK
-   Connection: keep-alive
-   Content-Length: 126
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 14:14:27 GMT
-   Via: 1.1 a3c7cc30af6c8465e695a3c0d44793e0.cloudfront.net (CloudFront)
-   X-Amz-Cf-Id: PAkgH2j5G2er_TZwyQOcwGahwNTR8dhEhrCUklcdDuuEBcKOYQ1-Ug==
-   X-Amzn-Trace-Id: Root=1-5b4df9c1-89a47758a7a7989e47799a12;Sampled=0
-   X-Cache: Miss from cloudfront
-   x-amz-apigw-id: KLP2SFnTPHcFeqw=
-   x-amzn-RequestId: b5e7488a-89cb-11e8-acbf-eda14961f501
+$ http $(chalice url)
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 126
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 14:14:27 GMT
+Via: 1.1 a3c7cc30af6c8465e695a3c0d44793e0.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: PAkgH2j5G2er_TZwyQOcwGahwNTR8dhEhrCUklcdDuuEBcKOYQ1-Ug==
+X-Amzn-Trace-Id: Root=1-5b4df9c1-89a47758a7a7989e47799a12;Sampled=0
+X-Cache: Miss from cloudfront
+x-amz-apigw-id: KLP2SFnTPHcFeqw=
+x-amzn-RequestId: b5e7488a-89cb-11e8-acbf-eda14961f501
 
-   [
-   {
-   "labels": [
-   "Human",
-   "People",
-   "Person",
-   "Phone Booth",
-   "Bus",
-   "Transportation",
-   "Vehicle",
-   "Man",
-   "Face",
-   "Leisure Activities",
-   "Tourist",
-   "Portrait",
-   "Crowd"
-   ],
-   "name": "othersample.jpg",
-   "type": "image"
-   },
-   {
-   "labels": [
-   "Animal",
-   "Canine",
-   "Dog",
-   "German Shepherd",
-   "Mammal",
-   "Pet",
-   "Collie"
-   ],
-   "name": "sample.jpg",
-   "type": "image"
-   }
-   ]
+[
+{
+"labels": [
+"Human",
+"People",
+"Person",
+"Phone Booth",
+"Bus",
+"Transportation",
+"Vehicle",
+"Man",
+"Face",
+"Leisure Activities",
+"Tourist",
+"Portrait",
+"Crowd"
+],
+"name": "othersample.jpg",
+"type": "image"
+},
+{
+"labels": [
+"Animal",
+"Canine",
+"Dog",
+"German Shepherd",
+"Mammal",
+"Pet",
+"Collie"
+],
+"name": "sample.jpg",
+"type": "image"
+}
+]
 ```
 
 Note `chalice url` just returns the URL of the remotely deployed API.
@@ -1743,102 +1743,102 @@ Note `chalice url` just returns the URL of the remotely deployed API.
 3. Use HTTPie to test out a couple of the query string parameters::
 
 ```java
-   $ http $(chalice url) label=='Phone Booth'
-   HTTP/1.1 200 OK
-   Connection: keep-alive
-   Content-Length: 207
-   Content-Type: application/json
-   Date: Sun, 22 Jul 2018 07:49:37 GMT
-   Via: 1.1 75fd15ce5d9f38e4c444039a1548df96.cloudfront.net (CloudFront)
-   X-Amz-Cf-Id: nYpeS8kk_lFklCA7wCkOI0NO1wabDI3jvs3UpHFlsJ-c0nvlXNrvJQ==
-   X-Amzn-Trace-Id: Root=1-5b543710-8beb4000395cd60e5688841a;Sampled=0
-   X-Cache: Miss from cloudfront
-   x-amz-apigw-id: Ka2KpF0nvHcF1hg=
-   x-amzn-RequestId: c7e9cabf-8d83-11e8-b109-5f2c96dac9da
+$ http $(chalice url) label=='Phone Booth'
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 207
+Content-Type: application/json
+Date: Sun, 22 Jul 2018 07:49:37 GMT
+Via: 1.1 75fd15ce5d9f38e4c444039a1548df96.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: nYpeS8kk_lFklCA7wCkOI0NO1wabDI3jvs3UpHFlsJ-c0nvlXNrvJQ==
+X-Amzn-Trace-Id: Root=1-5b543710-8beb4000395cd60e5688841a;Sampled=0
+X-Cache: Miss from cloudfront
+x-amz-apigw-id: Ka2KpF0nvHcF1hg=
+x-amzn-RequestId: c7e9cabf-8d83-11e8-b109-5f2c96dac9da
 
-   [
-   {
-   "labels": [
-   "Human",
-   "People",
-   "Person",
-   "Phone Booth",
-   "Bus",
-   "Transportation",
-   "Vehicle",
-   "Man",
-   "Face",
-   "Leisure Activities",
-   "Tourist",
-   "Portrait",
-   "Crowd"
-   ],
-   "name": "othersample.jpg",
-   "type": "image"
-   }
-   ]
+[
+{
+"labels": [
+"Human",
+"People",
+"Person",
+"Phone Booth",
+"Bus",
+"Transportation",
+"Vehicle",
+"Man",
+"Face",
+"Leisure Activities",
+"Tourist",
+"Portrait",
+"Crowd"
+],
+"name": "othersample.jpg",
+"type": "image"
+}
+]
 ```
 
 ```java
-   $ http $(chalice url) startswith==sample
-   HTTP/1.1 200 OK
-   Connection: keep-alive
-   Content-Length: 126
-   Content-Type: application/json
-   Date: Sun, 22 Jul 2018 07:51:03 GMT
-   Via: 1.1 53657f22d99084ad547a21392858391b.cloudfront.net (CloudFront)
-   X-Amz-Cf-Id: TORlA6wdOff5n4xHUH9ftnXNxFrTmQsSFG18acx7iwKLA_NsUoUoCg==
-   X-Amzn-Trace-Id: Root=1-5b543766-912f6e067cb58ddcb6a973de;Sampled=0
-   X-Cache: Miss from cloudfront
-   x-amz-apigw-id: Ka2YEGNvPHcF8SA=
-   x-amzn-RequestId: fb25c9e7-8d83-11e8-898d-8da83b49132b
+$ http $(chalice url) startswith==sample
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 126
+Content-Type: application/json
+Date: Sun, 22 Jul 2018 07:51:03 GMT
+Via: 1.1 53657f22d99084ad547a21392858391b.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: TORlA6wdOff5n4xHUH9ftnXNxFrTmQsSFG18acx7iwKLA_NsUoUoCg==
+X-Amzn-Trace-Id: Root=1-5b543766-912f6e067cb58ddcb6a973de;Sampled=0
+X-Cache: Miss from cloudfront
+x-amz-apigw-id: Ka2YEGNvPHcF8SA=
+x-amzn-RequestId: fb25c9e7-8d83-11e8-898d-8da83b49132b
 
-   [
-   {
-   "labels": [
-   "Animal",
-   "Canine",
-   "Dog",
-   "German Shepherd",
-   "Mammal",
-   "Pet",
-   "Collie"
-   ],
-   "name": "sample.jpg",
-   "type": "image"
-   }
-   ]
+[
+{
+"labels": [
+"Animal",
+"Canine",
+"Dog",
+"German Shepherd",
+"Mammal",
+"Pet",
+"Collie"
+],
+"name": "sample.jpg",
+"type": "image"
+}
+]
 ```
 
 4. Use HTTPie to query the deployed API for `sample.jpg` image::
 
 ```java
-   $ http $(chalice url)sample.jpg
-   HTTP/1.1 200 OK
-   Connection: keep-alive
-   Content-Length: 124
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 14:16:04 GMT
-   Via: 1.1 7ca583dd6abc0b0f42b148142a75588a.cloudfront.net (CloudFront)
-   X-Amz-Cf-Id: pzkZ0uZvk5e5W-ZV39v2zCCFAmmRJjDMJZ_I9GyDKhg6WEHotrMmnQ==
-   X-Amzn-Trace-Id: Root=1-5b4dfa24-69d586d8e94fb75019b42f24;Sampled=0
-   X-Cache: Miss from cloudfront
-   x-amz-apigw-id: KLQFrF3svHcF32Q=
-   x-amzn-RequestId: f0a6a6af-89cb-11e8-8420-e7ec8398ed6b
+$ http $(chalice url)sample.jpg
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 124
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 14:16:04 GMT
+Via: 1.1 7ca583dd6abc0b0f42b148142a75588a.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: pzkZ0uZvk5e5W-ZV39v2zCCFAmmRJjDMJZ_I9GyDKhg6WEHotrMmnQ==
+X-Amzn-Trace-Id: Root=1-5b4dfa24-69d586d8e94fb75019b42f24;Sampled=0
+X-Cache: Miss from cloudfront
+x-amz-apigw-id: KLQFrF3svHcF32Q=
+x-amzn-RequestId: f0a6a6af-89cb-11e8-8420-e7ec8398ed6b
 
-   {
-   "labels": [
-   "Animal",
-   "Canine",
-   "Dog",
-   "German Shepherd",
-   "Mammal",
-   "Pet",
-   "Collie"
-   ],
-   "name": "sample.jpg",
-   "type": "image"
-   }
+{
+"labels": [
+"Animal",
+"Canine",
+"Dog",
+"German Shepherd",
+"Mammal",
+"Pet",
+"Collie"
+],
+"name": "sample.jpg",
+"type": "image"
+}
 ```
 
 https://chalice-workshop.readthedocs.io/en/latest/media-query/07-videos.html
@@ -1869,21 +1869,21 @@ introduce you to this workflow.
 1. Upload a sample video to the S3 bucket::
 
 ```java
-   $ aws s3 cp ../chalice-workshop/code/media-query/final/assets/sample.mp4 s3://$MEDIA_BUCKET_NAME
+$ aws s3 cp ../chalice-workshop/code/media-query/final/assets/sample.mp4 s3://$MEDIA_BUCKET_NAME
 ```
 
 2. Run the `start-label-detection` command with the AWS CLI to start a
    label detection job on the uploaded video and save the `JobId`::
 
 ```java
-   $ JOB_ID=$(aws rekognition start-label-detection --video S3Object="{Bucket=$MEDIA_BUCKET_NAME,Name=sample.mp4}" --query JobId --output text)
+$ JOB_ID=$(aws rekognition start-label-detection --video S3Object="{Bucket=$MEDIA_BUCKET_NAME,Name=sample.mp4}" --query JobId --output text)
 ```
 
 3. Run the `get-label-detection` command until the `JobStatus` field is
    equal to `SUCCEEDED` and retrieve the video labels::
 
 ```java
-   $ aws rekognition get-label-detection --job-id $JOB_ID
+$ aws rekognition get-label-detection --job-id $JOB_ID
 ```
 
 ### Verification
@@ -1892,47 +1892,47 @@ introduce you to this workflow.
    `get-label-detection` command should contain::
 
 ```java
-   {
-   "JobStatus": "SUCCEEDED",
-   "VideoMetadata": {
-   "Codec": "h264",
-   "DurationMillis": 10099,
-   "Format": "QuickTime / MOV",
-   "FrameRate": 29.707088470458984,
-   "FrameHeight": 960,
-   "FrameWidth": 540
-   },
-   "Labels": [
-   {
-   "Timestamp": 0,
-   "Label": {
-   "Name": "Animal",
-   "Confidence": 66.68909454345703
-   }
-   },
-   {
-   "Timestamp": 0,
-   "Label": {
-   "Name": "Dog",
-   "Confidence": 60.80849838256836
-   }
-   },
-   {
-   "Timestamp": 0,
-   "Label": {
-   "Name": "Husky",
-   "Confidence": 51.586997985839844
-   }
-   },
-   {
-   "Timestamp": 168,
-   "Label": {
-   "Name": "Animal",
-   "Confidence": 58.79970169067383
-   }
-   },
-   ...[SHORTENED]...
-   }
+{
+"JobStatus": "SUCCEEDED",
+"VideoMetadata": {
+"Codec": "h264",
+"DurationMillis": 10099,
+"Format": "QuickTime / MOV",
+"FrameRate": 29.707088470458984,
+"FrameHeight": 960,
+"FrameWidth": 540
+},
+"Labels": [
+{
+"Timestamp": 0,
+"Label": {
+"Name": "Animal",
+"Confidence": 66.68909454345703
+}
+},
+{
+"Timestamp": 0,
+"Label": {
+"Name": "Dog",
+"Confidence": 60.80849838256836
+}
+},
+{
+"Timestamp": 0,
+"Label": {
+"Name": "Husky",
+"Confidence": 51.586997985839844
+}
+},
+{
+"Timestamp": 168,
+"Label": {
+"Name": "Animal",
+"Confidence": 58.79970169067383
+}
+},
+...[SHORTENED]...
+}
 ```
 
 ## Create SNS topic and IAM role
@@ -1949,21 +1949,21 @@ Rekognition can use to publish this message.
    containing an IAM role and SNS topic for Rekognition to publish to::
 
 ```java
-   $ cp ../chalice-workshop/code/media-query/07-videos/resources.json .
+$ cp ../chalice-workshop/code/media-query/07-videos/resources.json .
 ```
 
 2. Deploy the new resources to your CloudFormation stack using the AWS CLI::
 
 ```java
-   $ aws cloudformation deploy --template-file resources.json \
-    --stack-name media-query --capabilities CAPABILITY_IAM
+$ aws cloudformation deploy --template-file resources.json \
+   --stack-name media-query --capabilities CAPABILITY_IAM
 ```
 
 3. Save the SNS topic and IAM role information as environment variables in the
    Chalice application by running the `recordresources.py` script::
 
 ```java
-   $ python recordresources.py --stack-name media-query
+$ python recordresources.py --stack-name media-query
 ```
 
 ### Verification
@@ -1973,24 +1973,24 @@ Rekognition can use to publish this message.
    `VIDEO_TOPIC_ARN`::
 
 ```java
-   $ cat .chalice/config.json
-   {
-   "version": "2.0",
-   "app_name": "media-query",
-   "stages": {
-   "dev": {
-   "api_gateway_stage": "api",
-   "autogen_policy": false,
-   "environment_variables": {
-   "MEDIA_TABLE_NAME": "media-query-MediaTable-10QEPR0O8DOT4",
-   "MEDIA_BUCKET_NAME": "media-query-mediabucket-fb8oddjbslv1",
-   "VIDEO_TOPIC_NAME": "media-query-VideoTopic-KU38EEHIIUV1",
-   "VIDEO_ROLE_ARN": "arn:aws:iam::123456789123:role/media-query-VideoRole-1GKK0CA30VCAD",
-   "VIDEO_TOPIC_ARN": "arn:aws:sns:us-west-2:123456789123:media-query-VideoTopic-KU38EEHIIUV1"
-   }
-   }
-   }
-   }
+$ cat .chalice/config.json
+{
+"version": "2.0",
+"app_name": "media-query",
+"stages": {
+"dev": {
+"api_gateway_stage": "api",
+"autogen_policy": false,
+"environment_variables": {
+"MEDIA_TABLE_NAME": "media-query-MediaTable-10QEPR0O8DOT4",
+"MEDIA_BUCKET_NAME": "media-query-mediabucket-fb8oddjbslv1",
+"VIDEO_TOPIC_NAME": "media-query-VideoTopic-KU38EEHIIUV1",
+"VIDEO_ROLE_ARN": "arn:aws:iam::123456789123:role/media-query-VideoRole-1GKK0CA30VCAD",
+"VIDEO_TOPIC_ARN": "arn:aws:sns:us-west-2:123456789123:media-query-VideoTopic-KU38EEHIIUV1"
+}
+}
+}
+}
 ```
 
 ## Deploy a lambda function for retrieving processed video labels
@@ -2035,27 +2035,27 @@ def add_video_file(event):
 4. Run `chalice deploy` to deploy the new Lambda function::
 
 ```java
-   $ chalice deploy
-   Creating deployment package.
-   Updating policy for IAM role: media-query-dev-handle_object_created
-   Updating lambda function: media-query-dev-handle_object_created
-   Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_created
-   Updating policy for IAM role: media-query-dev-handle_object_removed
-   Updating lambda function: media-query-dev-handle_object_removed
-   Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_removed
-   Creating IAM role: media-query-dev-add_video_file
-   Creating lambda function: media-query-dev-add_video_file
-   Subscribing media-query-dev-add_video_file to SNS topic media-query-VideoTopic-KU38EEHIIUV1
-   Updating policy for IAM role: media-query-dev-api_handler
-   Updating lambda function: media-query-dev
-   Updating rest API
-   Resources deployed:
+$ chalice deploy
+Creating deployment package.
+Updating policy for IAM role: media-query-dev-handle_object_created
+Updating lambda function: media-query-dev-handle_object_created
+Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_created
+Updating policy for IAM role: media-query-dev-handle_object_removed
+Updating lambda function: media-query-dev-handle_object_removed
+Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_removed
+Creating IAM role: media-query-dev-add_video_file
+Creating lambda function: media-query-dev-add_video_file
+Subscribing media-query-dev-add_video_file to SNS topic media-query-VideoTopic-KU38EEHIIUV1
+Updating policy for IAM role: media-query-dev-api_handler
+Updating lambda function: media-query-dev
+Updating rest API
+Resources deployed:
 
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_created
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_removed
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-add_video_file
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev
-   - Rest API URL: https://1lmxgj9bfl.execute-api.us-west-2.amazonaws.com/api/
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_created
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_removed
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-add_video_file
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev
+- Rest API URL: https://1lmxgj9bfl.execute-api.us-west-2.amazonaws.com/api/
 ```
 
 ### Verification
@@ -2063,94 +2063,94 @@ def add_video_file(event):
 1. Retrieve the arn of the deployed SNS topic::
 
 ```java
-   $ VIDEO_TOPIC_ARN=$(aws cloudformation describe-stacks --stack-name media-query --query "Stacks[0].Outputs[?OutputKey=='VideoTopicArn'].OutputValue" --output text)
+$ VIDEO_TOPIC_ARN=$(aws cloudformation describe-stacks --stack-name media-query --query "Stacks[0].Outputs[?OutputKey=='VideoTopicArn'].OutputValue" --output text)
 ```
 
 2. Retrieve the arn of the deployed IAM role::
 
 ```java
-   $ VIDEO_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name media-query --query "Stacks[0].Outputs[?OutputKey=='VideoRoleArn'].OutputValue" --output text)
+$ VIDEO_ROLE_ARN=$(aws cloudformation describe-stacks --stack-name media-query --query "Stacks[0].Outputs[?OutputKey=='VideoRoleArn'].OutputValue" --output text)
 ```
 
 3. Run the `start-label-detection` command with the AWS CLI to start a
    label detection job on the uploaded video::
 
 ```java
-   $ aws rekognition start-label-detection \
-    --video S3Object="{Bucket=$MEDIA_BUCKET_NAME,Name=sample.mp4}" \
-        --notification-channel SNSTopicArn=$VIDEO_TOPIC_ARN,RoleArn=$VIDEO_ROLE_ARN
+$ aws rekognition start-label-detection \
+   --video S3Object="{Bucket=$MEDIA_BUCKET_NAME,Name=sample.mp4}" \
+      --notification-channel SNSTopicArn=$VIDEO_TOPIC_ARN,RoleArn=$VIDEO_ROLE_ARN
 ```
 
 4. Wait roughly twenty seconds and then use HTTPie to query for the video against the
    application's API::
 
 ```java
-   $ http $(chalice url)sample.mp4
-   HTTP/1.1 200 OK
-   Connection: keep-alive
-   Content-Length: 151
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 21:42:12 GMT
-   Via: 1.1 aa42484f82c16d99015c599631def20c.cloudfront.net (CloudFront)
-   X-Amz-Cf-Id: GpqmQOwnKcaxb2sP2fi-KSs8LCu24Q6ekKV8Oyo6a0HZ7kcnSGMpnQ==
-   X-Amzn-Trace-Id: Root=1-5b4e62b4-da9db3b1e4c95470cbc2b160;Sampled=0
-   X-Cache: Miss from cloudfront
-   x-amz-apigw-id: KMRcNHUQvHcFaDQ=
-   x-amzn-RequestId: 43c1cb91-8a0a-11e8-af84-8901f225e7d3
+$ http $(chalice url)sample.mp4
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 151
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 21:42:12 GMT
+Via: 1.1 aa42484f82c16d99015c599631def20c.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: GpqmQOwnKcaxb2sP2fi-KSs8LCu24Q6ekKV8Oyo6a0HZ7kcnSGMpnQ==
+X-Amzn-Trace-Id: Root=1-5b4e62b4-da9db3b1e4c95470cbc2b160;Sampled=0
+X-Cache: Miss from cloudfront
+x-amz-apigw-id: KMRcNHUQvHcFaDQ=
+x-amzn-RequestId: 43c1cb91-8a0a-11e8-af84-8901f225e7d3
 
-   {
-   "labels": [
-   "Clothing",
-   "Bird Nest",
-   "Dog",
-   "Human",
-   "People",
-   "Person",
-   "Husky",
-   "Animal",
-   "Nest",
-   "Footwear"
-   ],
-   "name": "sample.mp4",
-   "type": "video"
-   }
+{
+"labels": [
+"Clothing",
+"Bird Nest",
+"Dog",
+"Human",
+"People",
+"Person",
+"Husky",
+"Animal",
+"Nest",
+"Footwear"
+],
+"name": "sample.mp4",
+"type": "video"
+}
 ```
 
 5. Make sure the `sample.mp4` is included when querying for items that have a
    `video` media type::
 
 ```java
-   $ http $(chalice url) media-type==video
-   HTTP/1.1 200 OK
-   Connection: keep-alive
-   Content-Length: 153
-   Content-Type: application/json
-   Date: Sun, 22 Jul 2018 07:58:28 GMT
-   Via: 1.1 5d53b9570a535c2d94ce93c20abbd471.cloudfront.net (CloudFront)
-   X-Amz-Cf-Id: JwvyQ_rEePlEyRAGjtQ1jDnvjXPKt8ea3FiNLdgBbjWnf2G4UTpUaw==
-   X-Amzn-Trace-Id: Root=1-5b543923-02ddf1e74491eb77d692c8fd;Sampled=0
-   X-Cache: Miss from cloudfront
-   x-amz-apigw-id: Ka3dkFlHvHcFYIQ=
-   x-amzn-RequestId: 0441fc0a-8d85-11e8-b51a-bd624fe1291d
+$ http $(chalice url) media-type==video
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 153
+Content-Type: application/json
+Date: Sun, 22 Jul 2018 07:58:28 GMT
+Via: 1.1 5d53b9570a535c2d94ce93c20abbd471.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: JwvyQ_rEePlEyRAGjtQ1jDnvjXPKt8ea3FiNLdgBbjWnf2G4UTpUaw==
+X-Amzn-Trace-Id: Root=1-5b543923-02ddf1e74491eb77d692c8fd;Sampled=0
+X-Cache: Miss from cloudfront
+x-amz-apigw-id: Ka3dkFlHvHcFYIQ=
+x-amzn-RequestId: 0441fc0a-8d85-11e8-b51a-bd624fe1291d
 
-   [
-   {
-   "labels": [
-   "Footwear",
-   "Human",
-   "People",
-   "Nest",
-   "Bird Nest",
-   "Person",
-   "Dog",
-   "Husky",
-   "Clothing",
-   "Animal"
-   ],
-   "name": "sample.mp4",
-   "type": "video"
-   }
-   ]
+[
+{
+"labels": [
+"Footwear",
+"Human",
+"People",
+"Nest",
+"Bird Nest",
+"Person",
+"Dog",
+"Husky",
+"Clothing",
+"Animal"
+],
+"name": "sample.mp4",
+"type": "video"
+}
+]
 ```
 
 ## Automate video workflow on S3 uploads and deletions
@@ -2212,27 +2212,27 @@ def handle_object_removed(event):
 4. Run `chalice deploy` to deploy the updated Chalice application::
 
 ```java
-   $ chalice deploy
-   Creating deployment package.
-   Updating policy for IAM role: media-query-dev-handle_object_created
-   Updating lambda function: media-query-dev-handle_object_created
-   Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_created
-   Updating policy for IAM role: media-query-dev-handle_object_removed
-   Updating lambda function: media-query-dev-handle_object_removed
-   Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_removed
-   Creating IAM role: media-query-dev-add_video_file
-   Creating lambda function: media-query-dev-add_video_file
-   Subscribing media-query-dev-add_video_file to SNS topic media-query-VideoTopic-KU38EEHIIUV1
-   Updating policy for IAM role: media-query-dev-api_handler
-   Updating lambda function: media-query-dev
-   Updating rest API
-   Resources deployed:
+$ chalice deploy
+Creating deployment package.
+Updating policy for IAM role: media-query-dev-handle_object_created
+Updating lambda function: media-query-dev-handle_object_created
+Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_created
+Updating policy for IAM role: media-query-dev-handle_object_removed
+Updating lambda function: media-query-dev-handle_object_removed
+Configuring S3 events in bucket media-query-mediabucket-fb8oddjbslv1 to function media-query-dev-handle_object_removed
+Creating IAM role: media-query-dev-add_video_file
+Creating lambda function: media-query-dev-add_video_file
+Subscribing media-query-dev-add_video_file to SNS topic media-query-VideoTopic-KU38EEHIIUV1
+Updating policy for IAM role: media-query-dev-api_handler
+Updating lambda function: media-query-dev
+Updating rest API
+Resources deployed:
 
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_created
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_removed
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-add_video_file
-   - Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev
-   - Rest API URL: https://1lmxgj9bfl.execute-api.us-west-2.amazonaws.com/api/
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_created
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_removed
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-add_video_file
+- Lambda ARN: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev
+- Rest API URL: https://1lmxgj9bfl.execute-api.us-west-2.amazonaws.com/api/
 ```
 
 ### Verification
@@ -2240,71 +2240,71 @@ def handle_object_removed(event):
 1. Delete the previously uploaded `sample.mp4` from the S3 bucket::
 
 ```java
-   $ aws s3 rm s3://$MEDIA_BUCKET_NAME/sample.mp4
+$ aws s3 rm s3://$MEDIA_BUCKET_NAME/sample.mp4
 ```
 
 2. Ensure the `sample.mp4` video no longer is queryable from the
    application's API::
 
 ```java
-   $ http $(chalice url)sample.mp4
-   HTTP/1.1 404 Not Found
-   Connection: keep-alive
-   Content-Length: 88
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 22:06:57 GMT
-   Via: 1.1 e93b65cf89966087a2d9723b4713fb37.cloudfront.net (CloudFront)
-   X-Amz-Cf-Id: XD7Wr8-zY8cUAEvnSU_ojyvAadTiNatcJXuztSmBta3Kiluvuvf6ug==
-   X-Amzn-Trace-Id: Root=1-5b4e6880-c6c366d38f1e906798146b4b;Sampled=0
-   X-Cache: Error from cloudfront
-   x-amz-apigw-id: KMVEAFEPPHcFieQ=
-   x-amzn-RequestId: b7fba401-8a0d-11e8-a7e4-a9e75b4bb382
+$ http $(chalice url)sample.mp4
+HTTP/1.1 404 Not Found
+Connection: keep-alive
+Content-Length: 88
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 22:06:57 GMT
+Via: 1.1 e93b65cf89966087a2d9723b4713fb37.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: XD7Wr8-zY8cUAEvnSU_ojyvAadTiNatcJXuztSmBta3Kiluvuvf6ug==
+X-Amzn-Trace-Id: Root=1-5b4e6880-c6c366d38f1e906798146b4b;Sampled=0
+X-Cache: Error from cloudfront
+x-amz-apigw-id: KMVEAFEPPHcFieQ=
+x-amzn-RequestId: b7fba401-8a0d-11e8-a7e4-a9e75b4bb382
 
-   {
-   "Code": "NotFoundError",
-   "Message": "NotFoundError: Media file (sample.mp4) not found"
-   }
+{
+"Code": "NotFoundError",
+"Message": "NotFoundError: Media file (sample.mp4) not found"
+}
 ```
 
 3. Reupload the `sample.mp4` to the S3 bucket::
 
 ```java
- $ aws s3 cp ../chalice-workshop/code/media-query/final/assets/sample.mp4 s3://$MEDIA_BUCKET_NAME
+$ aws s3 cp ../chalice-workshop/code/media-query/final/assets/sample.mp4 s3://$MEDIA_BUCKET_NAME
 ```
 
 4. After waiting roughly 20 seconds, ensure the `sample.mp4` video is
    queryable again from the application's API::
 
 ```java
-   $ http $(chalice url)sample.mp4
-   HTTP/1.1 200 OK
-   Connection: keep-alive
-   Content-Length: 151
-   Content-Type: application/json
-   Date: Tue, 17 Jul 2018 21:42:12 GMT
-   Via: 1.1 aa42484f82c16d99015c599631def20c.cloudfront.net (CloudFront)
-   X-Amz-Cf-Id: GpqmQOwnKcaxb2sP2fi-KSs8LCu24Q6ekKV8Oyo6a0HZ7kcnSGMpnQ==
-   X-Amzn-Trace-Id: Root=1-5b4e62b4-da9db3b1e4c95470cbc2b160;Sampled=0
-   X-Cache: Miss from cloudfront
-   x-amz-apigw-id: KMRcNHUQvHcFaDQ=
-   x-amzn-RequestId: 43c1cb91-8a0a-11e8-af84-8901f225e7d3
+$ http $(chalice url)sample.mp4
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 151
+Content-Type: application/json
+Date: Tue, 17 Jul 2018 21:42:12 GMT
+Via: 1.1 aa42484f82c16d99015c599631def20c.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: GpqmQOwnKcaxb2sP2fi-KSs8LCu24Q6ekKV8Oyo6a0HZ7kcnSGMpnQ==
+X-Amzn-Trace-Id: Root=1-5b4e62b4-da9db3b1e4c95470cbc2b160;Sampled=0
+X-Cache: Miss from cloudfront
+x-amz-apigw-id: KMRcNHUQvHcFaDQ=
+x-amzn-RequestId: 43c1cb91-8a0a-11e8-af84-8901f225e7d3
 
-   {
-   "labels": [
-   "Clothing",
-   "Bird Nest",
-   "Dog",
-   "Human",
-   "People",
-   "Person",
-   "Husky",
-   "Animal",
-   "Nest",
-   "Footwear"
-   ],
-   "name": "sample.mp4",
-   "type": "video"
-   }
+{
+"labels": [
+"Clothing",
+"Bird Nest",
+"Dog",
+"Human",
+"People",
+"Person",
+"Husky",
+"Animal",
+"Nest",
+"Footwear"
+],
+"name": "sample.mp4",
+"type": "video"
+}
 ```
 
 ## Final Code
@@ -2448,30 +2448,30 @@ application.
 1. Delete the chalice application::
 
 ```java
-   $ chalice delete
-   Deleting Rest API: kyfn3gqcf0
-   Deleting function: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev
-   Deleting IAM role: media-query-dev-api_handler
-   Deleting function: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-add_video_file
-   Deleting IAM role: media-query-dev-add_video_file
-   Deleting function: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_removed
-   Deleting IAM role: media-query-dev-handle_object_removed
-   Deleting function: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_created
-   Deleting IAM role: media-query-dev-handle_object_created
+$ chalice delete
+Deleting Rest API: kyfn3gqcf0
+Deleting function: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev
+Deleting IAM role: media-query-dev-api_handler
+Deleting function: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-add_video_file
+Deleting IAM role: media-query-dev-add_video_file
+Deleting function: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_removed
+Deleting IAM role: media-query-dev-handle_object_removed
+Deleting function: arn:aws:lambda:us-west-2:123456789123:function:media-query-dev-handle_object_created
+Deleting IAM role: media-query-dev-handle_object_created
 ```
 
 2. Delete all objects in your S3 bucket::
 
 ```java
-   $ aws s3 rm s3://$MEDIA_BUCKET_NAME --recursive
-   delete: s3://media-query-mediabucket-4b1h8anboxpa/sample.jpg
-   delete: s3://media-query-mediabucket-4b1h8anboxpa/sample.mp4
+$ aws s3 rm s3://$MEDIA_BUCKET_NAME --recursive
+delete: s3://media-query-mediabucket-4b1h8anboxpa/sample.jpg
+delete: s3://media-query-mediabucket-4b1h8anboxpa/sample.mp4
 ```
 
 3. Delete the CloudFormation stack containing the additional AWS resources::
 
 ```java
-   $ aws cloudformation delete-stack --stack-name media-query
+$ aws cloudformation delete-stack --stack-name media-query
 ```
 
 ## Validation
@@ -2479,23 +2479,19 @@ application.
 1. Ensure that the API for the application no longer exists::
 
 ```java
-   $ chalice url
-   Error: Could not find a record of a Rest API in chalice stage: 'dev'
+$ chalice url
+Error: Could not find a record of a Rest API in chalice stage: 'dev'
 ```
 
 2. Check the existence of a couple of resources from the CloudFormation stack
    to make sure the resources no longer exist::
 
 ```java
-   $ aws s3 ls s3://$MEDIA_BUCKET_NAME
-   An error occurred (NoSuchBucket) when calling the ListObjects operation: The specified bucket does not exist
+$ aws s3 ls s3://$MEDIA_BUCKET_NAME
+An error occurred (NoSuchBucket) when calling the ListObjects operation: The specified bucket does not exist
 ```
 
 ```java
-   $ aws dynamodb describe-table --table-name $MEDIA_TABLE_NAME
-   An error occurred (ResourceNotFoundException) when calling the DescribeTable operation: Requested resource not found: Table: media-query-MediaTable-YIM7BMEIOF8Y not found
-```
-
-```
-
+$ aws dynamodb describe-table --table-name $MEDIA_TABLE_NAME
+An error occurred (ResourceNotFoundException) when calling the DescribeTable operation: Requested resource not found: Table: media-query-MediaTable-YIM7BMEIOF8Y not found
 ```
